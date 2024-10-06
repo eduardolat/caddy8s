@@ -1,0 +1,31 @@
+# https://taskfile.dev
+
+version: "3"
+
+dotenv: [".env"]
+
+tasks:
+  build:
+    cmds:
+      - docker build -t eduardolat/caddy8s:latest -f Dockerfile .
+
+  enter:
+    cmds:
+      - task build
+      - >
+        docker run --rm -it
+        -e CLOUDFLARED_TOKEN="$CLOUDFLARED_TOKEN"
+        -e CADDY_CONFIG="$CADDY_CONFIG"
+        -p 8083:80
+        eduardolat/caddy8s:latest
+        /bin/bash
+
+  run:
+    cmds:
+      - task build
+      - >
+        docker run --rm
+        -e CLOUDFLARED_TOKEN="$CLOUDFLARED_TOKEN"
+        -e CADDY_CONFIG="$CADDY_CONFIG"
+        -p 8083:80
+        eduardolat/caddy8s:latest
